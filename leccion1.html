@@ -277,31 +277,34 @@ const FILL=[
 
 // ---------- Voz ----------
 const plain=s=>s.replace(/́/g,"").replace(/___/g,"").replace(/\s+\/\s+/g,", ");
-let ruVoice=null;
+const hasTTS="speechSynthesis" in window;
+let ruVoice=null,player=null;
 const msg=document.getElementById("voiceMsg");
-function pickVoice(){
- if(!("speechSynthesis" in window)){msg.textContent="Este navegador no tiene voz. Probá con Chrome.";msg.hidden=false;return}
- const v=speechSynthesis.getVoices();
- ruVoice=v.find(x=>/^ru(-|_|$)/i.test(x.lang))||null;
- if(v.length&&!ruVoice){msg.textContent="Sin voz rusa: instalala en Ajustes → Texto a voz.";msg.hidden=false}else msg.hidden=true;
+function note(t){msg.textContent=t;msg.hidden=!t}
+function pickVoice(){if(!hasTTS)return;const v=speechSynthesis.getVoices();ruVoice=v.find(x=>/^ru(-|_|$)/i.test(x.lang))||null}
+if(hasTTS){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+const slow=()=>document.getElementById("slow").checked;
+function stopAll(){if(hasTTS)speechSynthesis.cancel();if(player){player.pause();player=null}}
+// Plan B: audio por internet cuando el celular no tiene voz rusa o el visor no permite la voz
+function playOnline(text,onend){
+ const a=new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ru&q="+encodeURIComponent(plain(text)));
+ a.referrerPolicy="no-referrer";a.playbackRate=slow()?0.8:1;player=a;
+ a.onended=()=>{player=null;onend&&onend()};
+ a.play().then(()=>note("")).catch(()=>{note("No pude reproducir el audio. Abrí la página en Chrome y revisá el volumen.");onend&&onend()});
 }
-if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}else pickVoice();
-function say(text,onend){
- if(!("speechSynthesis" in window))return;
- speechSynthesis.cancel();
+function speakOne(text,onend){
+ if(!hasTTS||!ruVoice){playOnline(text,onend);return}
+ let started=false;
  const u=new SpeechSynthesisUtterance(plain(text));
- u.lang="ru-RU";if(ruVoice)u.voice=ruVoice;
- u.rate=document.getElementById("slow").checked?0.7:0.95;
- if(onend)u.onend=onend;
- speechSynthesis.speak(u);
+ u.lang="ru-RU";u.voice=ruVoice;u.rate=slow()?0.7:0.95;
+ u.onstart=()=>{started=true;note("")};
+ u.onend=()=>{onend&&onend()};
+ u.onerror=()=>{if(!started)playOnline(text,onend)};
+ speechSynthesis.resume();speechSynthesis.speak(u);
+ setTimeout(()=>{if(!started&&!speechSynthesis.speaking){speechSynthesis.cancel();playOnline(text,onend)}},1500);
 }
-function sayQueue(list){
- if(!("speechSynthesis" in window))return;
- speechSynthesis.cancel();
- const r=document.getElementById("slow").checked?0.7:0.95;
- list.forEach(t=>{const u=new SpeechSynthesisUtterance(plain(t));u.lang="ru-RU";if(ruVoice)u.voice=ruVoice;u.rate=r;speechSynthesis.speak(u)});
-}
-
+function say(text){stopAll();setTimeout(()=>speakOne(text),60)}
+function sayQueue(list){stopAll();let i=0;const next=()=>{if(i<list.length)speakOne(list[i++],next)};setTimeout(next,60)}
 // ---------- Palabras ----------
 function card(w){
  const b=document.createElement("div");b.className="card";b.tabIndex=0;b.setAttribute("role","button");
