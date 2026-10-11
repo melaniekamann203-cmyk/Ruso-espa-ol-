@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruso Lección 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: app de una columna, pestañas fijas arriba; tarjetas de palabras en grilla, ejercicios en tarjetas grandes */
+:root{
+  --night:#140c2b;--card:#2a1a56;--line:#4a3590;--ink:#f3eeff;--muted:#b9abe3;
+  --glow:#ff7ad9;--sky:#8fb3ff;--good:#5fe0a8;--bad:#ff6b7f;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--night)}
+body{background:radial-gradient(1100px 560px at 85% -10%,#6b2fb8 0%,transparent 60%),radial-gradient(900px 500px at -10% 25%,#2b3ea8 0%,transparent 55%),var(--night);
+  color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;padding-inline:16px;padding-block:0 64px;min-height:100%}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:760px;margin:0 auto}
+header{padding-block:28px 14px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--sky)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,8vw,50px);line-height:1.05;margin:8px 0 6px;
+  background:linear-gradient(100deg,#fff 0%,#ffc4ef 45%,var(--glow) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-wrap:balance}
+.lead{color:var(--muted);margin:0;max-width:60ch}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding-block:10px;background:linear-gradient(var(--night) 70%,transparent)}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:rgba(20,12,43,.9)}
+.tabs button{font-family:var(--body);font-weight:700;font-size:13px;border:0;border-radius:999px;padding:9px 4px;background:transparent;color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--glow);color:var(--night)}
+.tools{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--muted)}
+.tools label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.tools input{accent-color:var(--glow);width:18px;height:18px}
+#voiceMsg{color:var(--glow)}
+h2{font-family:var(--display);font-weight:500;font-size:20px;margin:28px 0 6px}
+.sub{color:var(--muted);margin:0 0 14px;font-size:15px}
+button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.card{position:relative;background:rgba(42,26,86,.8);border:1px solid var(--line);border-radius:16px;padding:14px;min-width:0;cursor:pointer;text-align:left;color:var(--ink);font-family:var(--body);min-height:150px;display:flex;flex-direction:column;gap:2px}
+.card .ico{font-size:30px;line-height:1}
+.card .ru{font-family:var(--display);font-weight:500;font-size:19px;margin-top:8px;overflow-wrap:anywhere}
+.card .fon{font-family:var(--mono);color:var(--glow);font-size:13px}
+.card .es{color:var(--muted);font-size:14px;margin-top:auto}
+.card.hide-es .es{visibility:hidden}
+.say{position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;border:0;background:var(--sky);color:var(--night);font-size:17px;cursor:pointer;display:grid;place-items:center}
+.say.big{position:static;width:44px;height:44px;flex-shrink:0}
+.toggle{font-family:var(--body);font-weight:700;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer}
+
+.rows{display:grid;gap:8px}
+.row{display:flex;gap:12px;align-items:center;background:rgba(42,26,86,.75);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.row .txt{min-width:0;flex:1}
+.row .ru{font-family:var(--display);font-weight:500;font-size:16px;overflow-wrap:anywhere}
+.row .fon{font-family:var(--mono);color:var(--glow);font-size:13px;display:block}
+.row .es{color:var(--muted);font-size:14px;display:block}
+
+.dlg{background:rgba(34,21,69,.8);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+.dlg h3{font-family:var(--display);font-weight:500;font-size:16px;margin:0 0 10px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.line{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid rgba(74,53,144,.5)}
+.line:first-of-type{border-top:0}
+.who{font-family:var(--mono);font-size:12px;color:var(--sky);width:22px;flex-shrink:0;padding-top:4px}
+.line .txt{flex:1;min-width:0}
+.line .ru{font-weight:700;font-size:16px}
+.line .fon{font-family:var(--mono);font-size:13px;color:var(--glow);display:block}
+.line .es{font-size:14px;color:var(--muted);display:block}
+.mini{width:34px;height:34px;border-radius:50%;border:0;background:rgba(143,179,255,.2);color:var(--sky);cursor:pointer;flex-shrink:0;font-size:15px}
+.play{font-family:var(--body);font-weight:700;font-size:13px;border:0;border-radius:999px;padding:8px 14px;background:var(--sky);color:var(--night);cursor:pointer}
+
+.quiz{background:linear-gradient(160deg,rgba(58,34,120,.9),rgba(34,21,69,.95));border:1px solid var(--line);border-radius:20px;padding:18px}
+.modes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.modes button{font-family:var(--body);font-weight:700;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:7px 14px;cursor:pointer}
+.modes button[aria-pressed="true"]{border-color:var(--glow);color:var(--ink)}
+.qtop{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.prompt{text-align:center;padding:18px 0 14px}
+.prompt .big{font-family:var(--display);font-size:clamp(28px,8vw,40px);font-weight:500}
+.prompt .hint{font-family:var(--mono);color:var(--glow);font-size:14px;min-height:20px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{font-family:var(--body);font-weight:600;font-size:15px;padding:14px 10px;border-radius:14px;border:1px solid var(--line);background:rgba(20,12,43,.6);color:var(--ink);cursor:pointer;min-height:54px}
+.opt.ok{background:rgba(95,224,168,.2);border-color:var(--good)}
+.opt.no{background:rgba(255,107,127,.18);border-color:var(--bad)}
+.next{margin-top:14px;width:100%;font-family:var(--body);font-weight:700;font-size:15px;border:0;border-radius:999px;padding:12px;background:var(--glow);color:var(--night);cursor:pointer}
+.final{text-align:center;padding:20px 0}
+.final .score{font-family:var(--display);font-size:44px;color:var(--glow)}
+
+.fill{display:grid;gap:10px}
+.fq{background:rgba(42,26,86,.75);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.fq .s{font-size:17px;font-weight:600}
+.fq .gap{display:inline-block;min-width:70px;border-bottom:2px solid var(--glow);text-align:center;color:var(--glow);padding:0 4px}
+.fq .gap.ok{color:var(--good);border-color:var(--good)}
+.fq .t{color:var(--muted);font-size:14px;margin:2px 0 8px}
+.fq .ch{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.fq .ch button.c{font-family:var(--body);font-weight:600;font-size:14px;border:1px solid var(--line);background:rgba(20,12,43,.6);color:var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer}
+.fq .ch button.c.no{border-color:var(--bad);color:var(--bad)}
+footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:380px){.grid{grid-template-columns:1fr 1fr}.card .ru{font-size:17px}}
+@media (prefers-reduced-motion:reduce){#stars{display:none}}
+</style>
+</head>
+<body>
+
+
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Урок 1 · Lección 1</div>
+  <h1>В аэропорту</h1>
+  <p class="lead">En el aeropuerto: control de pasaportes y profesiones. Tocá 🔊 para escuchar cada palabra en ruso.</p>
+</header>
+
+<div class="bar">
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-pal" data-p="pal" aria-selected="true" type="button">Palabras</button>
+    <button role="tab" id="t-fra" data-p="fra" aria-selected="false" type="button">Frases</button>
+    <button role="tab" id="t-dia" data-p="dia" aria-selected="false" type="button">Diálogos</button>
+    <button role="tab" id="t-pra" data-p="pra" aria-selected="false" type="button">Practicar</button>
+  </div>
+  <div class="tools">
+    <label for="slow"><input type="checkbox" id="slow" checked> Voz lenta</label>
+    <span id="voiceMsg" hidden></span>
+  </div>
+</div>
+
+<section id="p-pal">
+  <h2>Новые слова · Palabras nuevas</h2>
+  <p class="sub">Tocá una tarjeta para escucharla. Ocultá el español para ponerte a prueba.</p>
+  <button class="toggle" id="hideEs" type="button">Ocultar español</button>
+  <h2>Objetos</h2>
+  <div class="grid" id="g-obj"></div>
+  <h2>Viaje y profesiones</h2>
+  <div class="grid" id="g-pro"></div>
+</section>
+
+<section id="p-fra" hidden>
+  <h2>Palabras y expresiones útiles</h2>
+  <p class="sub">Las palabras chiquitas que arman todas las frases de la lección.</p>
+  <div class="rows" id="r-pal"></div>
+  <h2>Frases modelo</h2>
+  <div class="rows" id="r-fra"></div>
+</section>
+
+<section id="p-dia" hidden>
+  <h2>Diálogos de práctica</h2>
+  <p class="sub">Diálogos nuevos con el vocabulario de la lección. Escuchá todo seguido o línea por línea.</p>
+  <div id="dlgs"></div>
+</section>
+
+<section id="p-pra" hidden>
+  <h2>Quiz de palabras</h2>
+  <div class="quiz">
+    <div class="modes">
+      <button type="button" id="m1" data-m="read" aria-pressed="true">Leer → elegir</button>
+      <button type="button" id="m2" data-m="listen" aria-pressed="false">Escuchar → elegir</button>
+      <button type="button" id="m3" data-m="es" aria-pressed="false">Español → ruso</button>
+    </div>
+    <div id="quiz"></div>
+  </div>
+  <h2>Completá la frase</h2>
+  <p class="sub">Elegí la palabra que falta.</p>
+  <div class="fill" id="fill"></div>
+</section>
+
+<footer>Удачи! (u-DA-chi, ¡suerte!)</footer>
+</div>
+
+<script>
+const S="́";
+// [ruso con acento, fonética, español, ícono, grupo]
+const W=[
+ ["аэропо"+S+"рт","a-e-ra-PORT","aeropuerto","✈️","obj"],
+ ["докуме"+S+"нты","da-ku-MIEN-ty","documentos","📄","obj"],
+ ["па"+S+"спорт","PAS-part","pasaporte","🛂","obj"],
+ ["биле"+S+"т","bi-LIET","pasaje, boleto","🎫","obj"],
+ ["ключ","KLIUCH","llave","🔑","obj"],
+ ["ка"+S+"рта","KAR-ta","mapa","🗺️","obj"],
+ ["де"+S+"ньги","DIEN'-gui","dinero","💵","obj"],
+ ["телефо"+S+"н","ti-li-FON","teléfono","📱","obj"],
+ ["очки"+S,"ach-KI","anteojos","🕶️","obj"],
+ ["журна"+S+"л","zhur-NAL","revista","📰","obj"],
+ ["кни"+S+"га","KNI-ga","libro","📕","obj"],
+ ["газе"+S+"та","ga-ZIE-ta","diario","🗞️","obj"],
+ ["я"+S+"блоко","IA-bla-ka","manzana","🍏","obj"],
+ ["компью"+S+"тер","kam-PIU-ter","computadora","💻","obj"],
+ ["ви"+S+"за","VI-za","visa","🪪","pro"],
+ ["бага"+S+"ж","ba-GASH","equipaje","🧳","pro"],
+ ["тури"+S+"ст / тури"+S+"стка","tu-RIST / tu-RIST-ka","turista (él / ella)","🧍","pro"],
+ ["музыка"+S+"нт","mu-zy-KANT","músico","🎹","pro"],
+ ["студе"+S+"нт / студе"+S+"нтка","stu-DIENT / stu-DIENT-ka","estudiante (él / ella)","🎓","pro"],
+ ["до"+S+"ктор","DOK-tar","doctor","🩺","pro"],
+ ["инжене"+S+"р","in-zhy-NIER","ingeniero","🛠️","pro"],
+ ["журнали"+S+"ст / журнали"+S+"стка","zhur-na-LIST / zhur-na-LIST-ka","periodista (él / ella)","🎤","pro"],
+ ["ме"+S+"неджер","ME-ne-dzher","gerente, mánager","💼","pro"]
+];
+const P=[
+ ["там","TAM","allá"],["тут","TUT","acá"],["где","GDIE","dónde"],["что","SHTO","qué"],
+ ["э"+S+"то","E-ta","esto, es"],["то"+S+"же","TO-zhe","también"],["вот","VOT","aquí está"],["хорошо"+S,"ja-ra-SHO","bien, está bien"],
+ ["кто","KTO","quién"],["ещё","ie-SH'IO","además, también"],["извини"+S+"те","iz-vi-NI-tie","disculpe, perdón"],["спаси"+S+"бо","spa-SI-ba","gracias"],
+ ["большо"+S+"е спаси"+S+"бо","bal'-SHO-ie spa-SI-ba","muchas gracias"],["пожа"+S+"луйста","pa-ZHA-lus-ta","por favor / de nada"],
+ ["сле"+S+"ва","SLIE-va","a la izquierda"],["спра"+S+"ва","SPRA-va","a la derecha"],
+ ["да","DA","sí"],["нет","NIET","no"],["не","nie","no (antes de una palabra)"],["я","IA","yo"],["вы","VY","usted / ustedes"],
+ ["он / она"+S,"ON / a-NA","él / ella"],["они"+S,"a-NI","ellos, ellas"]
+];
+const F=[
+ ["Па"+S+"спорт тут.","PAS-part TUT.","El pasaporte está acá."],
+ ["Где ви"+S+"за?","GDIE VI-za?","¿Dónde está la visa?"],
+ ["Я"+S+"блоко то"+S+"же тут.","IA-bla-ka TO-zhe TUT.","La manzana también está acá."],
+ ["Что э"+S+"то? — Э"+S+"то журна"+S+"л.","SHTO E-ta? — E-ta zhur-NAL.","¿Qué es esto? — Es una revista."],
+ ["Кто вы?","KTO VY?","¿Quién es usted?"],
+ ["Вы тури"+S+"ст?","VY tu-RIST?","¿Usted es turista?"],
+ ["Я тури"+S+"ст. А вы?","IA tu-RIST. a VY?","Soy turista. ¿Y usted?"],
+ ["Я не инжене"+S+"р.","IA nie in-zhy-NIER.","No soy ingeniero."],
+ ["Нет, не ме"+S+"неджер.","NIET, nie ME-ne-dzher.","No, no soy gerente."]
+];
+const D=[
+ {t:"En el control de pasaportes",l:[
+  ["A","Здра"+S+"вствуйте! Ваш па"+S+"спорт, пожа"+S+"луйста.","ZDRAST-vui-tie! VASH PAS-part, pa-ZHA-lus-ta.","¡Hola! Su pasaporte, por favor."],
+  ["B","Вот па"+S+"спорт.","VOT PAS-part.","Aquí está el pasaporte."],
+  ["A","Спаси"+S+"бо. А где биле"+S+"т?","spa-SI-ba. a GDIE bi-LIET?","Gracias. ¿Y dónde está el pasaje?"],
+  ["B","Биле"+S+"т тут.","bi-LIET TUT.","El pasaje está acá."],
+  ["A","Вы студе"+S+"нт?","VY stu-DIENT?","¿Usted es estudiante?"],
+  ["B","Нет, я не студе"+S+"нт. Я инжене"+S+"р.","NIET, IA nie stu-DIENT. IA in-zhy-NIER.","No, no soy estudiante. Soy ingeniero."],
+  ["A","Хорошо"+S+". Спаси"+S+"бо.","ja-ra-SHO. spa-SI-ba.","Bien. Gracias."]]},
+ {t:"¿Dónde está el equipaje?",l:[
+  ["A","Извини"+S+"те, где бага"+S+"ж?","iz-vi-NI-tie, GDIE ba-GASH?","Disculpe, ¿dónde está el equipaje?"],
+  ["B","Бага"+S+"ж спра"+S+"ва.","ba-GASH SPRA-va.","El equipaje está a la derecha."],
+  ["A","Спаси"+S+"бо! А где ка"+S+"рта?","spa-SI-ba! a GDIE KAR-ta?","¡Gracias! ¿Y dónde está el mapa?"],
+  ["B","Ка"+S+"рта то"+S+"же тут.","KAR-ta TO-zhe TUT.","El mapa también está acá."],
+  ["A","Большо"+S+"е спаси"+S+"бо!","bal'-SHO-ie spa-SI-ba!","¡Muchas gracias!"],
+  ["B","Пожа"+S+"луйста.","pa-ZHA-lus-ta.","De nada."]]},
+ {t:"¿Qué es esto? ¿Quién es usted?",l:[
+  ["A","Что э"+S+"то?","SHTO E-ta?","¿Qué es esto?"],
+  ["B","Э"+S+"то телефо"+S+"н.","E-ta ti-li-FON.","Es un teléfono."],
+  ["A","А э"+S+"то?","a E-ta?","¿Y esto?"],
+  ["B","Э"+S+"то очки"+S+". А вот кни"+S+"га и газе"+S+"та.","E-ta ach-KI. a VOT KNI-ga i ga-ZIE-ta.","Son anteojos. Y acá están el libro y el diario."],
+  ["A","Кто вы?","KTO VY?","¿Quién es usted?"],
+  ["B","Я журнали"+S+"стка. А вы?","IA zhur-na-LIST-ka. a VY?","Soy periodista. ¿Y usted?"],
+  ["A","Я музыка"+S+"нт.","IA mu-zy-KANT.","Soy músico."]]}
+];
+const FILL=[
+ ["Па"+S+"спорт ___ .","El pasaporte está acá.","тут",["тут","кто","вот"]],
+ ["___ ви"+S+"за?","¿Dónde está la visa?","где",["что","где","там"]],
+ ["Бага"+S+"ж ___ , сле"+S+"ва.","El equipaje está allá, a la izquierda.","там",["там","тоже","да"]],
+ ["Я"+S+"блоко ___ тут.","La manzana también está acá.","то"+S+"же",["нет","то"+S+"же","вы"]],
+ ["___ э"+S+"то? — Э"+S+"то журна"+S+"л.","¿Qué es esto? — Es una revista.","что",["кто","где","что"]],
+ ["Большо"+S+"е ___ !","¡Muchas gracias!","спаси"+S+"бо",["пожа"+S+"луйста","спаси"+S+"бо","хорошо"+S]],
+ ["___ вы? — Я тури"+S+"ст.","¿Quién es usted? — Soy turista.","кто",["кто","что","вот"]],
+ ["Я ___ до"+S+"ктор.","No soy doctor.","не",["да","не","я"]],
+ ["Бага"+S+"ж ___ , спра"+S+"ва.","El equipaje está acá, a la derecha.","тут",["тут","где","ещё"]],
+ ["Па"+S+"спорт, ___ !","¡El pasaporte, por favor!","пожа"+S+"луйста",["извини"+S+"те","пожа"+S+"луйста","хорошо"+S]]
+];
+
+// ---------- Voz ----------
+const plain=s=>s.replace(/́/g,"").replace(/___/g,"").replace(/\s+\/\s+/g,", ");
+let ruVoice=null;
+const msg=document.getElementById("voiceMsg");
+function pickVoice(){
+ if(!("speechSynthesis" in window)){msg.textContent="Este navegador no tiene voz. Probá con Chrome.";msg.hidden=false;return}
+ const v=speechSynthesis.getVoices();
+ ruVoice=v.find(x=>/^ru(-|_|$)/i.test(x.lang))||null;
+ if(v.length&&!ruVoice){msg.textContent="Sin voz rusa: instalala en Ajustes → Texto a voz.";msg.hidden=false}else msg.hidden=true;
+}
+if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}else pickVoice();
+function say(text,onend){
+ if(!("speechSynthesis" in window))return;
+ speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(plain(text));
+ u.lang="ru-RU";if(ruVoice)u.voice=ruVoice;
+ u.rate=document.getElementById("slow").checked?0.7:0.95;
+ if(onend)u.onend=onend;
+ speechSynthesis.speak(u);
+}
+function sayQueue(list){
+ if(!("speechSynthesis" in window))return;
+ speechSynthesis.cancel();
+ const r=document.getElementById("slow").checked?0.7:0.95;
+ list.forEach(t=>{const u=new SpeechSynthesisUtterance(plain(t));u.lang="ru-RU";if(ruVoice)u.voice=ruVoice;u.rate=r;speechSynthesis.speak(u)});
+}
+
+// ---------- Palabras ----------
+function card(w){
+ const b=document.createElement("div");b.className="card";b.tabIndex=0;b.setAttribute("role","button");
+ b.innerHTML=`<span class="ico" aria-hidden="true">${w[3]}</span><span class="ru">${w[0]}</span><span class="fon">${w[1]}</span><span class="es">${w[2]}</span><span class="say" aria-hidden="true">🔊</span>`;
+ const go=()=>{say(w[0]);b.classList.remove("hide-es-one")};
+ b.addEventListener("click",go);b.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}});
+ return b;
+}
+W.forEach(w=>document.getElementById(w[4]==="obj"?"g-obj":"g-pro").appendChild(card(w)));
+const hb=document.getElementById("hideEs");let hidden=false;
+hb.addEventListener("click",()=>{hidden=!hidden;document.querySelectorAll(".card").forEach(c=>c.classList.toggle("hide-es",hidden));hb.textContent=hidden?"Mostrar español":"Ocultar español"});
+
+// ---------- Frases ----------
+function row(x){const d=document.createElement("div");d.className="row";
+ d.innerHTML=`<button class="say big" type="button" aria-label="Escuchar">🔊</button><div class="txt"><span class="ru">${x[0]}</span><span class="fon">${x[1]}</span><span class="es">${x[2]}</span></div>`;
+ d.querySelector("button").addEventListener("click",()=>say(x[0]));return d}
+P.forEach(x=>document.getElementById("r-pal").appendChild(row(x)));
+F.forEach(x=>document.getElementById("r-fra").appendChild(row(x)));
+
+// ---------- Diálogos ----------
+const DL=document.getElementById("dlgs");
+D.forEach((d,i)=>{const box=document.createElement("article");box.className="dlg";
+ box.innerHTML=`<h3><span>${i+1}. ${d.t}</span><button class="play" type="button" id="dplay-${i}">▶ Escuchar todo</button></h3>`;
+ d.l.forEach(l=>{const ln=document.createElement("div");ln.className="line";
+  ln.innerHTML=`<span class="who">${l[0]}</span><div class="txt"><span class="ru">${l[1]}</span><span class="fon">${l[2]}</span><span class="es">${l[3]}</span></div><button class="mini" type="button" aria-label="Escuchar">🔊</button>`;
+  ln.querySelector("button").addEventListener("click",()=>say(l[1]));box.appendChild(ln)});
+ box.querySelector(".play").addEventListener("click",()=>sayQueue(d.l.map(l=>l[1])));
+ DL.appendChild(box)});
+
+// ---------- Quiz ----------
+const QZ=document.getElementById("quiz");let mode="read",qs=[],qi=0,score=0;
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function startQuiz(){qs=shuffle(W).slice(0,10);qi=0;score=0;showQ()}
+function showQ(){
+ if(qi>=qs.length){QZ.innerHTML=`<div class="final"><div class="score">${score}/10</div><p>${score>=8?"¡Muy bien! Отлично!":score>=5?"¡Vas bien! Seguí practicando.":"Repasá las palabras y probá de nuevo."}</p><button class="next" type="button" id="again">Jugar otra vez</button></div>`;
+  document.getElementById("again").addEventListener("click",startQuiz);return}
+ const w=qs[qi];const wrong=shuffle(W.filter(x=>x!==w)).slice(0,3);const opts=shuffle([w,...wrong]);
+ const showRu=mode==="es";
+ let big=mode==="read"?w[0]:mode==="es"?w[2]:"🔊";
+ QZ.innerHTML=`<div class="qtop"><span>Pregunta ${qi+1}/10</span><span>Puntos: ${score}</span></div>
+ <div class="prompt"><div class="big" id="qbig" ${mode==="listen"?'role="button" tabindex="0" style="cursor:pointer"':""}>${big}</div><div class="hint" id="qhint">${mode==="listen"?"Tocá para escuchar de nuevo":""}</div></div>
+ <div class="opts">${opts.map((o,k)=>`<button class="opt" type="button" id="opt-${k}">${showRu||mode==="listen"?o[0]:o[2]}</button>`).join("")}</div><div id="qnext"></div>`;
+ if(mode!=="es")say(w[0]);
+ if(mode==="listen")document.getElementById("qbig").addEventListener("click",()=>say(w[0]));
+ QZ.querySelectorAll(".opt").forEach((b,k)=>b.addEventListener("click",()=>{
+  if(QZ.querySelector(".opt.ok"))return;
+  const right=opts[k]===w;if(right)score++;
+  QZ.querySelectorAll(".opt").forEach((x,j)=>{if(opts[j]===w)x.classList.add("ok")});
+  if(!right)b.classList.add("no");
+  document.getElementById("qhint").textContent=`${plain(w[0])} · ${w[1]} · ${w[2]}`;
+  if(mode==="es")say(w[0]);
+  document.getElementById("qnext").innerHTML=`<button class="next" type="button" id="nextq">${qi<9?"Siguiente":"Ver resultado"}</button>`;
+  document.getElementById("nextq").addEventListener("click",()=>{qi++;showQ()});
+ }));
+}
+document.querySelectorAll(".modes button").forEach(b=>b.addEventListener("click",()=>{
+ mode=b.dataset.m;document.querySelectorAll(".modes button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));startQuiz()}));
+
+// ---------- Completar ----------
+const FL=document.getElementById("fill");
+FILL.forEach((f,i)=>{const d=document.createElement("div");d.className="fq";
+ d.innerHTML=`<div class="s">${f[0].replace("___",'<span class="gap">?</span>')}</div><div class="t">${f[1]}</div><div class="ch">${shuffle(f[3]).map(o=>`<button class="c" type="button">${o}</button>`).join("")}</div>`;
+ d.querySelectorAll("button.c").forEach(b=>b.addEventListener("click",()=>{
+  const g=d.querySelector(".gap");if(g.classList.contains("ok"))return;
+  if(b.textContent===f[2]){g.textContent=f[2];g.classList.add("ok");d.querySelectorAll("button.c").forEach(x=>x.disabled=true);say(f[0].replace("___",f[2]))}
+  else{b.classList.add("no")}
+ }));
+ FL.appendChild(d)});
+
+// ---------- Pestañas ----------
+const tabs=document.querySelectorAll(".tabs button");
+function openTab(p){tabs.forEach(t=>t.setAttribute("aria-selected",t.dataset.p===p?"true":"false"));
+ ["pal","fra","dia","pra"].forEach(x=>document.getElementById("p-"+x).hidden=x!==p);
+ if(p==="pra"&&!qs.length)startQuiz();
+ try{localStorage.setItem("l1tab",p)}catch(e){}}
+tabs.forEach(t=>t.addEventListener("click",()=>{openTab(t.dataset.p);scrollTo({top:0})}));
+let first="pal";try{const s=localStorage.getItem("l1tab");if(["pal","fra","dia","pra"].includes(s))first=s}catch(e){}
+openTab(first);
+
+// ---------- Estrellas ----------
+const cv=document.getElementById("stars"),cx=cv.getContext("2d");let st=[];
+function size(){cv.width=innerWidth*devicePixelRatio;cv.height=innerHeight*devicePixelRatio;
+ st=Array.from({length:100},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:(Math.random()*1.3+.3)*devicePixelRatio,p:Math.random()*6.28}))}
+function draw(t){cx.clearRect(0,0,cv.width,cv.height);st.forEach(s=>{cx.globalAlpha=.35+.45*Math.sin(t/900+s.p);cx.fillStyle="#fff";cx.beginPath();cx.arc(s.x,s.y,s.r,0,6.28);cx.fill()});requestAnimationFrame(draw)}
+size();addEventListener("resize",size);
+if(!matchMedia("(prefers-reduced-motion: reduce)").matches)requestAnimationFrame(draw);
+</script>
+
+</body>
+</html>
