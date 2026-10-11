@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruso ⇄ Español</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: una columna, cielo nocturno violeta; selector de idioma arriba; alfabeto en fichas, prompts en tarjetas con copiar */
+:root{
+  --night:#140c2b;
+  --dusk:#221545;
+  --card:#2a1a56;
+  --line:#4a3590;
+  --ink:#f3eeff;
+  --muted:#b9abe3;
+  --glow:#ff7ad9;
+  --sky:#8fb3ff;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--night)}
+body{
+  background:
+    radial-gradient(1200px 600px at 80% -10%, #6b2fb8 0%, transparent 60%),
+    radial-gradient(900px 500px at -10% 20%, #2b3ea8 0%, transparent 55%),
+    var(--night);
+  color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;
+  padding-inline:16px;padding-block:0 56px;min-height:100%;
+}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:760px;margin:0 auto}
+.switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:20px;padding:5px;border:1px solid var(--line);border-radius:999px;background:rgba(20,12,43,.75)}
+.switch button{font-family:var(--body);font-weight:700;font-size:14px;border:0;border-radius:999px;padding:10px 8px;background:transparent;color:var(--muted);cursor:pointer;line-height:1.25}
+.switch button[aria-selected="true"]{background:var(--glow);color:var(--night)}
+.switch button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.switch small{display:block;font-weight:600;font-size:11px;opacity:.8}
+header{padding-block:28px 20px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--sky)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,8vw,56px);line-height:1.05;margin:10px 0 14px;text-wrap:balance;
+  background:linear-gradient(100deg,#fff 0%,#ffc4ef 45%,var(--glow) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1 .ru{display:block;font-size:.5em;color:var(--muted);-webkit-text-fill-color:var(--muted);margin-top:6px;font-weight:500}
+.lead{color:var(--muted);max-width:60ch;margin:0}
+h2{font-family:var(--display);font-weight:500;font-size:22px;margin:44px 0 6px;text-wrap:balance}
+.sub{color:var(--muted);margin:0 0 18px;max-width:62ch}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+nav a{font-family:var(--mono);font-size:13px;color:var(--ink);text-decoration:none;border:1px solid var(--line);padding:7px 14px;border-radius:999px;background:rgba(42,26,86,.6)}
+nav a:hover,nav a:focus-visible{border-color:var(--glow);outline:none}
+.steps{display:grid;gap:10px;counter-reset:s;padding:0;margin:0;list-style:none}
+.steps li{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;background:rgba(34,21,69,.7);border:1px solid var(--line);border-radius:14px;padding:14px}
+.steps li::before{content:counter(s);font-family:var(--display);font-size:14px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--glow);color:var(--night)}
+.steps li span{min-width:0}
+.hl{background:rgba(255,122,217,.18);color:var(--glow);border-radius:4px;padding:0 3px}
+.alpha{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.l{background:rgba(42,26,86,.75);border:1px solid var(--line);border-radius:12px;padding:10px 10px 9px;min-width:0}
+.l b{font-family:var(--display);font-weight:500;font-size:24px;display:block;line-height:1.1}
+.l .s{font-family:var(--mono);font-weight:600;color:var(--glow);font-size:14px;display:block;margin-top:4px}
+.l .n{font-size:12px;color:var(--muted);display:block;line-height:1.35;margin-top:2px}
+.l.trap{border-color:var(--glow);box-shadow:0 0 0 1px rgba(255,122,217,.25) inset}
+.legend{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);margin:0 0 12px}
+.legend i{width:12px;height:12px;border-radius:3px;border:1px solid var(--glow);display:inline-block}
+.rules{display:grid;gap:10px}
+.rule{background:rgba(34,21,69,.7);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.rule .ex{font-family:var(--mono);font-size:14px;color:var(--sky);display:block;margin-top:6px;overflow-wrap:anywhere}
+.prompts{display:grid;gap:14px}
+.p{background:linear-gradient(160deg,rgba(58,34,120,.85),rgba(34,21,69,.9));border:1px solid var(--line);border-radius:18px;padding:18px;min-width:0}
+.p-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.p h3{font-family:var(--display);font-weight:500;font-size:17px;margin:0;min-width:0}
+.p .use{color:var(--muted);font-size:14px;margin:4px 0 12px}
+pre{font-family:var(--mono);font-size:13px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;background:rgba(10,6,24,.6);border:1px solid rgba(143,179,255,.2);border-radius:12px;padding:14px;margin:0;color:#e6defc}
+pre mark{background:rgba(255,122,217,.18);color:var(--glow);border-radius:4px;padding:0 3px}
+button.copy{font-family:var(--body);font-weight:700;font-size:14px;border:0;border-radius:999px;padding:9px 16px;background:var(--glow);color:var(--night);cursor:pointer;flex-shrink:0}
+button.copy:hover{filter:brightness(1.08)}
+button.copy:focus-visible{outline:2px solid #fff;outline-offset:2px}
+button.copy.ok{background:var(--sky)}
+footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion:reduce){#stars{display:none}}
+</style>
+</head>
+<body>
+
+
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="wrap">
+<div class="switch" role="tablist" aria-label="Idioma / Язык">
+  <button id="tab-es" role="tab" type="button" aria-selected="true" data-mode="es">Quiero leer ruso<small>Hablo español</small></button>
+  <button id="tab-ru" role="tab" type="button" aria-selected="false" data-mode="ru">Хочу читать по-испански<small>Я говорю по-русски</small></button>
+</div>
+
+<!-- ============ ESPAÑOL → RUSO ============ -->
+<main id="mode-es" lang="es">
+<header>
+  <div class="eyebrow">Traductor y guía de lectura</div>
+  <h1>Leer ruso fácil<span class="ru">Читать по-русски легко</span></h1>
+  <p class="lead">Para leer ruso aunque todavía no conozcas las letras. Primero mirá el alfabeto y las reglas; después copiá un prompt, pegalo en Claude y cambiá lo que está resaltado.</p>
+  <nav>
+    <a href="#es-como">Cómo usarlo</a>
+    <a href="#es-alfabeto">Alfabeto</a>
+    <a href="#es-reglas">Reglas de lectura</a>
+    <a href="#es-prompts">Prompts</a>
+  </nav>
+</header>
+<section id="es-como">
+  <h2>Cómo usarlo</h2>
+  <ol class="steps">
+    <li><span>Elegí el prompt según lo que necesitás: traducir, leer una foto, practicar.</span></li>
+    <li><span>Tocá <strong>Copiar</strong> y pegalo en un chat nuevo con Claude.</span></li>
+    <li><span>Reemplazá lo <span class="hl">[resaltado]</span> por tu texto o adjuntá la foto.</span></li>
+    <li><span>Leé en voz alta la fonética, cargando la voz en la sílaba en MAYÚSCULA.</span></li>
+  </ol>
+</section>
+<section id="es-alfabeto">
+  <h2>El alfabeto, con sonidos en español</h2>
+  <p class="sub">33 letras. Las que tienen borde rosa son <strong>trampas</strong>: se parecen a letras nuestras pero suenan distinto.</p>
+  <div class="legend"><i></i> Letra trampa</div>
+  <div class="alpha" id="alpha-es"></div>
+</section>
+<section id="es-reglas">
+  <h2>Cinco reglas que cambian todo</h2>
+  <div class="rules">
+    <div class="rule"><strong>1. La O sin acento suena casi A.</strong> Solo suena O en la sílaba acentuada.<span class="ex">Москва → mask-VA · молоко → ma-la-KO</span></div>
+    <div class="rule"><strong>2. La Е y la Я sin acento suenan casi I.</strong><span class="ex">телефон → ti-li-FON · язык → i-ZYK</span></div>
+    <div class="rule"><strong>3. Al final de palabra, B, D, G, Z, V suenan P, T, K, S, F.</strong><span class="ex">клуб → KLUP · хлеб → JLIEP</span></div>
+    <div class="rule"><strong>4. Г en algunas terminaciones suena V.</strong> En -ого / -его.<span class="ex">сегодня → si-VOD-nia · его → ie-VO</span></div>
+    <div class="rule"><strong>5. El acento no se escribe en textos normales.</strong> Los libros para estudiantes lo marcan con una tilde (á). Si no está, pedí que te lo marquen.<span class="ex">спасибо → spa-SI-ba</span></div>
+  </div>
+</section>
+<section id="es-prompts">
+  <h2>Prompts listos para copiar</h2>
+  <p class="sub">Todos piden la misma fonética: letras latinas, sonidos en español y la sílaba fuerte en MAYÚSCULA.</p>
+  <div class="prompts" id="list-es"></div>
+</section>
+<footer>Удачи! (u-DA-chi, ¡suerte!)</footer>
+</main>
+
+<!-- ============ РУССКИЙ → ИСПАНСКИЙ ============ -->
+<main id="mode-ru" lang="ru" hidden>
+<header>
+  <div class="eyebrow">Переводчик и гид по чтению</div>
+  <h1>Испанский — это легко<span class="ru">El español es fácil</span></h1>
+  <p class="lead">Чтобы читать по-испански, даже если вы ещё не знаете правил. Посмотрите алфавит и правила, потом скопируйте подсказку (промпт), вставьте её в чат с Claude и замените выделенное.</p>
+  <nav>
+    <a href="#ru-como">Как пользоваться</a>
+    <a href="#ru-alfabeto">Алфавит</a>
+    <a href="#ru-reglas">Правила чтения</a>
+    <a href="#ru-prompts">Промпты</a>
+  </nav>
+</header>
+<section id="ru-como">
+  <h2>Как пользоваться</h2>
+  <ol class="steps">
+    <li><span>Выберите промпт: перевод, чтение фото, практика.</span></li>
+    <li><span>Нажмите <strong>Копировать</strong> и вставьте в новый чат с Claude.</span></li>
+    <li><span>Замените <span class="hl">[выделенное]</span> своим текстом или прикрепите фото.</span></li>
+    <li><span>Читайте транскрипцию вслух, делая ударение на слог, написанный ЗАГЛАВНЫМИ буквами.</span></li>
+  </ol>
+</section>
+<section id="ru-alfabeto">
+  <h2>Испанский алфавит русскими буквами</h2>
+  <p class="sub">Буквы с розовой рамкой — <strong>ловушки</strong>: они выглядят знакомо, но читаются иначе. Произношение — как в Аргентине.</p>
+  <div class="legend"><i></i> Буква-ловушка</div>
+  <div class="alpha" id="alpha-ru"></div>
+</section>
+<section id="ru-reglas">
+  <h2>Пять главных правил</h2>
+  <div class="rules">
+    <div class="rule"><strong>1. Гласные читаются всегда чётко.</strong> «O» всегда «о», «e» всегда «э», даже без ударения.<span class="ex">como → КО-мо · noche → НО-чэ</span></div>
+    <div class="rule"><strong>2. H никогда не читается.</strong><span class="ex">hola → О-ла · hotel → о-ТЭЛ</span></div>
+    <div class="rule"><strong>3. C и G перед e, i меняют звук.</strong> ce/ci = сэ/си, ge/gi = хэ/хи. В que/qui и gue/gui буква u не читается.<span class="ex">cena → СЭ-на · gente → ХЭН-тэ · queso → КЭ-со · guitarra → ги-ТА-рра</span></div>
+    <div class="rule"><strong>4. Ударение подчиняется правилу.</strong> Слово на гласную, n или s — ударение на предпоследний слог; на другую согласную — на последний. Если есть знак (á, é, í, ó, ú) — ударение там.<span class="ex">mesa → МЭ-са · papel → па-ПЭЛ · café → ка-ФЭ</span></div>
+    <div class="rule"><strong>5. В Аргентине ll и y звучат как «ш».</strong> В Испании и Мексике — ближе к «й».<span class="ex">calle → КА-шэ · yo → ШО · lluvia → ШУ-бья</span></div>
+  </div>
+</section>
+<section id="ru-prompts">
+  <h2>Готовые промпты</h2>
+  <p class="sub">Все просят одинаковую транскрипцию: испанские слова русскими буквами, ударный слог ЗАГЛАВНЫМИ.</p>
+  <div class="prompts" id="list-ru"></div>
+</section>
+<footer>¡Suerte! (СУЭР-тэ, удачи!)</footer>
+</main>
+</div>
+
+<script>
+function renderAlpha(id,letters){const A=document.getElementById(id);
+ letters.forEach(([c,s,n,t])=>{const d=document.createElement("div");d.className="l"+(t?" trap":"");
+ d.innerHTML=`<b>${c}</b><span class="s">${s}</span>${n?`<span class="n">${n}</span>`:""}`;A.appendChild(d)});}
+
+renderAlpha("alpha-es",[
+ ["А а","a","como en casa"],["Б б","b",""],["В в","v","v con dientes y labio",1],["Г г","g","siempre g de gato",1],
+ ["Д д","d",""],["Е е","ie","como en pie",1],["Ё ё","io","siempre acentuada"],["Ж ж","zh","como “yo” rioplatense"],
+ ["З з","z","s con zumbido",1],["И и","i",""],["Й й","i corta","como en hoy"],["К к","k",""],
+ ["Л л","l",""],["М м","m",""],["Н н","n","parece H",1],["О о","o","sin acento: a"],
+ ["П п","p",""],["Р р","r","parece P",1],["С с","s","parece C",1],["Т т","t",""],
+ ["У у","u","parece Y",1],["Ф ф","f",""],["Х х","j","parece X",1],["Ц ц","ts","como tsunami"],
+ ["Ч ч","ch","como chocolate"],["Ш ш","sh","sh del inglés"],["Щ щ","sh'","sh larga y suave"],["Ъ ъ","—","signo duro: pausa"],
+ ["Ы ы","y","i con la lengua atrás"],["Ь ь","'","ablanda la letra anterior"],["Э э","e","como en mesa"],["Ю ю","iu","como en viuda"],
+ ["Я я","ia","como en Mia"]
+]);
+renderAlpha("alpha-ru",[
+ ["A a","а",""],["B b","б",""],["C c","к / с","перед e, i — с",1],["Ch ch","ч","как в «чай»"],
+ ["D d","д","мягче, чем русская"],["E e","э","как в «это»",1],["F f","ф",""],["G g","г / х","перед e, i — х",1],
+ ["H h","—","не читается",1],["I i","и",""],["J j","х","как в «хорошо»",1],["K k","к","редкая"],
+ ["L l","л","не мягкая"],["Ll ll","ш","в Аргентине",1],["M m","м",""],["N n","н",""],
+ ["Ñ ñ","нь","как в «няня»"],["O o","о","всегда «о»"],["P p","п",""],["Qu qu","к","u не читается",1],
+ ["R r","р","rr — раскатистая"],["S s","с",""],["T t","т",""],["U u","у",""],
+ ["V v","б","как B!",1],["W w","у / в","редкая"],["X x","кс",""],["Y y","ш / и","в Аргентине «ш»",1],
+ ["Z z","с","не «з»",1]
+]);
+
+const FON_ES="Para la fonética usá letras latinas con sonidos del español (х = j, ж = zh, ш = sh, щ = sh', ц = ts, ы = y, я = ia, ю = iu, е = ie, ё = io), separá las sílabas con guiones y poné la sílaba acentuada en MAYÚSCULA. Aplicá la pronunciación real (o sin acento suena a, consonantes finales ensordecidas), no la letra por letra.";
+const FON_RU="Для произношения пиши испанские слова русскими буквами так, как они звучат на самом деле (аргентинский вариант: ll и y = ш, j = х, ñ = нь, v = б, h не читается, c перед e/i и z = с, e = э), раздели слоги дефисами и выдели ударный слог ЗАГЛАВНЫМИ буквами.";
+
+const PES=[
+ {t:"Traductor español → ruso",u:"Para decir algo en ruso y saber cómo pronunciarlo.",
+  p:`Actuá como mi traductor de ruso. No sé leer el alfabeto cirílico.
+Traducí al ruso este texto: [ESCRIBÍ TU TEXTO EN ESPAÑOL]
+
+Para cada frase dame:
+1. El texto en ruso (cirílico).
+2. La fonética. ${FON_ES}
+3. La traducción literal palabra por palabra.
+Si hay una forma formal y una informal, mostrame las dos y decime cuál usar con quién.`},
+ {t:"Traductor ruso → español",u:"Para entender un mensaje, cartel o texto que te mandaron.",
+  p:`No sé leer ruso. Traducime este texto al español: [PEGÁ EL TEXTO EN RUSO]
+
+Mostralo en una tabla con tres columnas: ruso | cómo se lee | qué significa.
+${FON_ES}
+Al final, explicame con palabras simples de qué trata el texto.`},
+ {t:"Leer una foto o captura",u:"Para carteles, menús, etiquetas o páginas de un libro.",
+  p:`Te adjunto una foto con texto en ruso. No sé leer cirílico.
+1. Transcribí todo el texto que se vea.
+2. Debajo de cada palabra o frase poné cómo se lee. ${FON_ES}
+3. Traducilo al español.
+Si alguna parte no se lee bien en la foto, decímelo en vez de adivinar.`},
+ {t:"Leer letra por letra",u:"Para aprender a leer de verdad una palabra difícil.",
+  p:`Estoy aprendiendo a leer ruso desde cero. Enseñame a leer esta palabra: [PALABRA EN RUSO]
+
+1. Separala letra por letra y decime cómo suena cada una en español.
+2. Juntá las letras en sílabas.
+3. Decime cuál es la sílaba acentuada y si alguna letra cambia de sonido por eso.
+4. Dame la fonética final. ${FON_ES}
+5. Qué significa y un ejemplo corto de uso.`},
+ {t:"Vocabulario por tema",u:"Para armar listas de palabras para el trabajo o un viaje.",
+  p:`Haceme una lista de [20] palabras y frases en ruso sobre [TEMA: aeropuerto, avión, hotel, comida, saludos…].
+Formato de tabla: español | ruso | cómo se lee.
+${FON_ES}
+Ordenalas de la más útil a la menos útil y marcá con ⭐ las 5 imprescindibles.`},
+ {t:"Frases de tripulante de cabina",u:"Para atender pasajeros que hablan ruso.",
+  p:`Trabajo como tripulante de cabina. Dame las frases más usadas para atender pasajeros en ruso: saludo al embarcar, ofrecer bebidas y comida, pedir que se abrochen el cinturón, emergencias básicas y despedida.
+Formato: español | ruso | cómo se lee.
+${FON_ES}
+Usá siempre la forma formal (вы).`},
+ {t:"Práctica de lectura",u:"Para entrenar sola, con ejercicios cortos.",
+  p:`Quiero practicar la lectura del alfabeto ruso. Soy principiante.
+Dame 10 palabras en ruso, de fácil a difícil, SIN fonética. Yo te escribo cómo creo que se leen.
+Después corregime: decime qué letras leí mal, cuál era la sílaba acentuada y la fonética correcta. ${FON_ES}
+Empezá con palabras parecidas al español (como такси o банк).`},
+ {t:"Conversación guiada",u:"Para practicar un diálogo como si fuera real.",
+  p:`Hagamos una conversación simple en ruso sobre [SITUACIÓN: presentarme, pedir en un café, en el aeropuerto…].
+Vos hablás una línea por vez. En cada mensaje poné: el ruso, cómo se lee y la traducción.
+${FON_ES}
+Esperá mi respuesta. Si respondo en español, mostrame cómo se diría en ruso. Si me equivoco, corregime con amabilidad.`}
+];
+
+const PRU=[
+ {t:"Переводчик русский → испанский",u:"Чтобы сказать что-то по-испански и знать, как это произносится.",
+  p:`Будь моим переводчиком на испанский. Я не умею читать по-испански.
+Переведи на испанский этот текст: [НАПИШИТЕ ТЕКСТ ПО-РУССКИ]
+
+Для каждой фразы дай:
+1. Текст на испанском.
+2. Произношение. ${FON_RU}
+3. Дословный перевод слово за словом.
+Если есть вежливая (usted) и дружеская (vos/tú) форма, покажи обе и объясни, когда какую использовать. В Аргентине вместо tú говорят vos.`},
+ {t:"Переводчик испанский → русский",u:"Чтобы понять сообщение, вывеску или текст.",
+  p:`Я не умею читать по-испански. Переведи этот текст на русский: [ВСТАВЬТЕ ТЕКСТ НА ИСПАНСКОМ]
+
+Покажи в таблице из трёх колонок: испанский | как читается | что значит.
+${FON_RU}
+В конце простыми словами объясни, о чём текст.`},
+ {t:"Прочитать фото или скриншот",u:"Для вывесок, меню, этикеток и страниц книги.",
+  p:`Прикрепляю фото с текстом на испанском. Я не умею его читать.
+1. Перепиши весь видимый текст.
+2. Под каждым словом или фразой напиши, как оно читается. ${FON_RU}
+3. Переведи на русский.
+Если какую-то часть на фото плохо видно, скажи об этом, а не угадывай.`},
+ {t:"Читать по буквам",u:"Чтобы научиться читать трудное слово.",
+  p:`Я учусь читать по-испански с нуля. Научи меня читать это слово: [СЛОВО НА ИСПАНСКОМ]
+
+1. Разбери его по буквам и скажи, как звучит каждая буква по-русски.
+2. Собери буквы в слоги.
+3. Скажи, какой слог ударный и по какому правилу.
+4. Дай итоговое произношение. ${FON_RU}
+5. Что оно значит и короткий пример.`},
+ {t:"Слова по теме",u:"Списки слов для работы, жизни или путешествия.",
+  p:`Составь список из [20] слов и фраз на испанском на тему [ТЕМА: магазин, транспорт, врач, работа, приветствия…].
+Таблица: русский | испанский | как читается.
+${FON_RU}
+Расположи от самых полезных к менее полезным и отметь ⭐ пять самых важных.`},
+ {t:"Жизнь в Аргентине",u:"Фразы на каждый день в Буэнос-Айресе.",
+  p:`Я живу в Аргентине (или собираюсь приехать). Дай самые нужные фразы на каждый день: знакомство, магазин, такси и автобус, кафе, аптека, банк, просьба о помощи.
+Таблица: русский | испанский | как читается.
+${FON_RU}
+Используй аргентинский вариант (vos вместо tú) и отметь местные слова, которые отличаются от Испании.`},
+ {t:"Практика чтения",u:"Короткие упражнения для самостоятельной тренировки.",
+  p:`Я хочу потренироваться читать по-испански. Я начинающий.
+Дай 10 испанских слов, от лёгких к трудным, БЕЗ транскрипции. Я напишу русскими буквами, как, по-моему, они читаются.
+Потом исправь меня: какие буквы я прочитал(а) неправильно, где ударение и как правильно. ${FON_RU}
+Начни со слов, похожих на русские (например, taxi или banco).`},
+ {t:"Разговор с подсказками",u:"Чтобы потренировать диалог как в жизни.",
+  p:`Давай проведём простой разговор на испанском на тему [СИТУАЦИЯ: знакомство, в кафе, в аэропорту…].
+Ты говоришь по одной реплике. В каждом сообщении пиши: испанский, как читается и перевод.
+${FON_RU}
+Жди моего ответа. Если я отвечу по-русски, покажи, как это сказать по-испански. Если я ошибусь, мягко поправь меня.`}
+];
+
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function renderPrompts(id,list,lbl){const L=document.getElementById(id);
+ list.forEach((x,i)=>{const c=document.createElement("article");c.className="p";
+  c.innerHTML=`<div class="p-head"><h3>${x.t}</h3><button class="copy" id="${id}-copy-${i}" type="button">${lbl.copy}</button></div>
+  <p class="use">${x.u}</p><pre>${esc(x.p).replace(/\[([^\]]+)\]/g,"<mark>[$1]</mark>")}</pre>`;
+  L.appendChild(c);const b=c.querySelector("button");
+  b.addEventListener("click",()=>{
+   const done=()=>{b.textContent=lbl.ok;b.classList.add("ok");setTimeout(()=>{b.textContent=lbl.copy;b.classList.remove("ok")},1800)};
+   const sel=()=>{const r=document.createRange();r.selectNodeContents(c.querySelector("pre"));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent=lbl.sel;};
+   try{navigator.clipboard.writeText(x.p).then(done,sel)}catch(e){sel()}
+  });
+ });}
+renderPrompts("list-es",PES,{copy:"Copiar",ok:"Copiado ✓",sel:"Seleccionado: copialo"});
+renderPrompts("list-ru",PRU,{copy:"Копировать",ok:"Скопировано ✓",sel:"Выделено: скопируйте"});
+
+// Selector de idioma
+const tabs=document.querySelectorAll(".switch button");
+function setMode(m){
+ document.getElementById("mode-es").hidden=m!=="es";
+ document.getElementById("mode-ru").hidden=m!=="ru";
+ tabs.forEach(t=>t.setAttribute("aria-selected",t.dataset.mode===m?"true":"false"));
+ document.documentElement.lang=m;
+ try{localStorage.setItem("modo",m)}catch(e){}
+}
+tabs.forEach(t=>t.addEventListener("click",()=>{setMode(t.dataset.mode);scrollTo({top:0})}));
+let start="es";
+if(location.hash.startsWith("#ru"))start="ru";
+else{try{const s=localStorage.getItem("modo");if(s==="ru"||s==="es")start=s}catch(e){}}
+setMode(start);
+
+// Estrellas
+const cv=document.getElementById("stars"),cx=cv.getContext("2d");let st=[];
+function size(){cv.width=innerWidth*devicePixelRatio;cv.height=innerHeight*devicePixelRatio;
+ st=Array.from({length:110},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:(Math.random()*1.3+.3)*devicePixelRatio,p:Math.random()*6.28}))}
+function draw(t){cx.clearRect(0,0,cv.width,cv.height);
+ st.forEach(s=>{const a=.35+.45*Math.sin(t/900+s.p);cx.globalAlpha=a;cx.fillStyle="#fff";cx.beginPath();cx.arc(s.x,s.y,s.r,0,6.28);cx.fill()});
+ requestAnimationFrame(draw)}
+size();addEventListener("resize",size);
+if(!matchMedia("(prefers-reduced-motion: reduce)").matches)requestAnimationFrame(draw);
+</script>
+
+</body>
+</html>
